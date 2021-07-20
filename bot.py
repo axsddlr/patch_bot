@@ -12,7 +12,7 @@ def get_prefix(bot, message):
     """A callable Prefix for our bot. This could be edited to allow per server prefixes."""
 
     # Notice how you can use spaces in prefixes. Try to keep them simple though.
-    prefixes = ["!"]
+    prefixes = ["$"]
 
     # Check to see if we are outside of a guild. e.g DM's etc.
     if not message.guild:
@@ -44,7 +44,7 @@ if __name__ == "__main__":
 @bot.event
 async def on_ready():
     #change presence to display custom message
-    await bot.change_presence(activity=discord.Game(name="!help"))
+    await bot.change_presence(activity=discord.Game(name="$help"))
     print("Bot connected")
 
 
