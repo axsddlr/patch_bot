@@ -16,8 +16,13 @@ nww_webhook = os.getenv("patches_webhook_url")
 crimson = 0xDC143C
 
 
-def getNWWUpdates():
-    URL = "https://api.axsddlr.xyz/newworld/updates"
+def getNWWUpdatesV1():
+    URL = "https://api.axsddlr.xyz/newworld/v1/updates"
+    response = requests.get(URL)
+    return response.json()
+
+def getNWWUpdatesV2():
+    URL = "https://api.axsddlr.xyz/newworld/v2/updates"
     response = requests.get(URL)
     return response.json()
 
@@ -42,7 +47,7 @@ class NWW_Patch(commands.Cog, name="New World Patch Notes"):
         saved_json = "nww_old.json"
 
         # call API
-        responseJSON = getNWWUpdates()
+        responseJSON = getNWWUpdatesV1()
 
         title = responseJSON["data"]["segments"][0]["title"]
         description = responseJSON["data"]["segments"][0]["description"]
@@ -97,7 +102,7 @@ class NWW_Patch(commands.Cog, name="New World Patch Notes"):
         scheduler = self.scheduler
 
         # add job for scheduler
-        scheduler.add_job(self.nww_patch_monitor, "interval", seconds=15)
+        scheduler.add_job(self.nww_patch_monitor, "interval", seconds=1800)
 
         # starting the scheduler
         scheduler.start()
