@@ -21,7 +21,7 @@ def getValorantGameUpdates():
 
 def getVALREDUpdates():
     URL = "https://api.axsddlr.xyz/reddit/Valorant"
-    response = requests.get(URL, headers=headers)
+    response = requests.get(URL)
     return response.json()
 
 
@@ -162,7 +162,7 @@ class Valorant_Updates(commands.Cog, name="Valorant Updates"):
 
         # add job for scheduler
         scheduler.add_job(self.valupdates, "interval", seconds=3600)
-        scheduler.add_job(self.reddit_monitor, "interval", seconds=900)
+        scheduler.add_job(self.reddit_monitor, "interval", seconds=1200)
 
         # starting the scheduler
         scheduler.start()
