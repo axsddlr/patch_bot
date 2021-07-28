@@ -105,7 +105,7 @@ class NWW_Patch(commands.Cog, name="New World Patch Notes"):
 
         title = responseJSON["data"][0]["title"]
         # description = responseJSON["data"][0]["description"]
-        thumbnail = responseJSON["data"][0]["thumbnail"]
+        thumbnail = "https://images.ctfassets.net/j95d1p8hsuun/12Tl0sQL6vNRfXPkIrfuaz/2374cc44fec67de6b53bcc080a57345d/keyart2.jpg"
         url = responseJSON["data"][0]["url"]
 
         # check if file exists
