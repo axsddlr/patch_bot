@@ -1,6 +1,6 @@
-# Rehkbot
+# Patch Bot
 
-Personal Discord bot
+Automated discord bot for displaying patch notes from various games.
 
 ## Requirements
 
@@ -17,21 +17,6 @@ for linux:
 python3 -m pip install -r requirements.txt
 ```
 
-### Required Linux Packages
-
-Run shell script located in root directory:
-
-`./setup.sh -i`
-
-Required packages to make bot run efficiently:
-
-```
-python3-psutil
-python3-dbus
-ffmpeg
-
-```
-
 ### ENV
 
 rename `.env.example` to `.env` then store your token and some other private info like this:
@@ -39,21 +24,6 @@ rename `.env.example` to `.env` then store your token and some other private inf
 ```
 DISCORD_TOKEN =
 DISCORD_BOT_ID =
-```
-
-### .ENV (for Twitch Live Notifier)
-
-In your `.env` fill in this info:
-
-```
-STREAMER=
-Image_Priority=Game
-TWITCH_CLIENT_ID =
-TWITCH_CLIENT_SECRET =
-WEBHOOK_URL =
-Message =
-Description =
-
 ```
 
 ### PM2
