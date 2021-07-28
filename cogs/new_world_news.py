@@ -9,7 +9,7 @@ from apscheduler.triggers.cron import CronTrigger
 from discord.ext import commands
 from discord.ext.commands.cooldowns import BucketType
 from dhooks import Webhook, Embed, File
-from utils.global_utils import news_exists, matches_exists
+from utils.global_utils import news_exists, nww_exists
 
 load_dotenv()
 nww_webhook = os.getenv("patches_webhook_url")
