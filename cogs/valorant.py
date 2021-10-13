@@ -1,12 +1,14 @@
 import os
 import time
-import ujson as json
+
 import requests
-from dotenv import load_dotenv
+import ujson as json
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from discord.ext import commands
 from dhooks import Webhook, Embed, File
-from utils.global_utils import news_exists, matches_exists
+from dotenv import load_dotenv
+from nextcord.ext import commands
+
+from utils.global_utils import news_exists
 
 load_dotenv()
 patches_webhook = os.getenv("patches_webhook_url")
@@ -19,10 +21,12 @@ def getValorantGameUpdates():
     response = requests.get(URL)
     return response.json()
 
+
 def getVALREDUpdates():
     URL = "https://api.axsddlr.xyz/reddit/Valorant"
     response = requests.get(URL)
     return response.json()
+
 
 def getVALCOMPREDUpdates():
     URL = "https://api.axsddlr.xyz/reddit/ValorantComp"

@@ -1,15 +1,14 @@
-import discord
-import requests
 import os
-import ujson as json
 import time
-from dotenv import load_dotenv
+
+import requests
+import ujson as json
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from apscheduler.triggers.cron import CronTrigger
-from discord.ext import commands
-from discord.ext.commands.cooldowns import BucketType
 from dhooks import Webhook, Embed, File
-from utils.global_utils import news_exists, nww_exists
+from dotenv import load_dotenv
+from nextcord.ext import commands
+
+from utils.global_utils import nww_exists
 
 load_dotenv()
 nww_webhook = os.getenv("patches_webhook_url")
@@ -17,14 +16,22 @@ crimson = 0xDC143C
 
 
 def getNWWUpdatesV1():
-    URL = "https://api.axsddlr.xyz/newworld/v1/updates"
+    URL = "https://api.axsddlr.xyz/newworld/news/updates"
     response = requests.get(URL)
     return response.json()
 
+
 def getNWWUpdatesV2():
-    URL = "https://api.axsddlr.xyz/newworld/v2/downtime"
+    URL = "https://api.axsddlr.xyz/newworld/forums/updates"
     response = requests.get(URL)
     return response.json()
+
+
+def getNWWREDUpdates():
+    URL = "https://api.axsddlr.xyz/reddit/Newworld"
+    response = requests.get(URL)
+    return response.json()
+
 
 def updater(d, inval, outval):
     for k, v in d.items():
@@ -49,13 +56,13 @@ class NWW_Patch(commands.Cog, name="New World Patch Notes"):
         # call API
         responseJSON = getNWWUpdatesV1()
 
-        title = responseJSON["data"]["segments"][0]["title"]
-        description = responseJSON["data"]["segments"][0]["description"]
-        thumbnail = responseJSON["data"]["segments"][0]["thumbnail"]
-        url = responseJSON["data"]["segments"][0]["url"]
+        title = responseJSON["data"][0]["title"]
+        description = responseJSON["data"][0]["description"]
+        thumbnail = responseJSON["data"][0]["thumbnail"]
+        url = responseJSON["data"][0]["url"]
 
         # check if file exists
-        news_exists(saved_json)
+        nww_exists(saved_json)
 
         time.sleep(5)
         # open saved_json and check title string
@@ -64,7 +71,7 @@ class NWW_Patch(commands.Cog, name="New World Patch Notes"):
         )
         data = json.load(f)
         res = updater(data, "", None)
-        check_file_json = res["data"]["segments"][0]["title"]
+        check_file_json = res["data"][0]["title"]
 
         # compare title string from file to title string from api then overwrite file
         if check_file_json == title:
@@ -150,15 +157,14 @@ class NWW_Patch(commands.Cog, name="New World Patch Notes"):
 
         f.close()
 
-
     @commands.Cog.listener()
     async def on_ready(self):
 
         scheduler = self.scheduler
 
         # add job for scheduler
-        scheduler.add_job(self.nww_patch_monitor, "interval", seconds=1800)
-        scheduler.add_job(self.nww_patch_monitorv2, "interval", seconds=1805)
+        scheduler.add_job(self.nww_patch_monitor, "interval", seconds=20)
+        # scheduler.add_job(self.nww_patch_monitorv2, "interval", seconds=1805)
 
         # starting the scheduler
         scheduler.start()

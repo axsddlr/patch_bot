@@ -1,14 +1,13 @@
-import discord
-import requests
 import os
-import ujson as json
 import time
-from dotenv import load_dotenv
+
+import requests
+import ujson as json
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from apscheduler.triggers.cron import CronTrigger
-from discord.ext import commands
-from discord.ext.commands.cooldowns import BucketType
-from dhooks import Webhook, Embed, File
+from dhooks import Webhook, Embed
+from dotenv import load_dotenv
+from nextcord.ext import commands
+
 from utils.global_utils import news_exists, matches_exists
 
 load_dotenv()

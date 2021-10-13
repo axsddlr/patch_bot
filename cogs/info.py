@@ -1,9 +1,10 @@
-import discord
-import time
-import psutil
-import os
 import datetime
-from discord.ext import commands
+import os
+import time
+
+import nextcord
+import psutil
+from nextcord.ext import commands
 
 start_time = time.time()
 
@@ -19,7 +20,7 @@ class InfoCog(commands.Cog, name="Info"):
 
     @commands.command()
     @commands.guild_only()
-    async def joined(self, ctx, *, member: discord.Member):
+    async def joined(self, ctx, *, member: nextcord.Member):
         """Says when a member joined."""
         await ctx.send(f"{member.display_name} joined on {member.joined_at}")
 
@@ -36,7 +37,7 @@ class InfoCog(commands.Cog, name="Info"):
     async def invite(self, ctx):
         """ Invite me to your server """
         await ctx.send(
-            f"**{ctx.author.name}**, use this URL to invite me\n<{discord.utils.oauth_url(self.bot.user.id)}>"
+            f"**{ctx.author.name}**, use this URL to invite me\n<{nextcord.utils.oauth_url(self.bot.user.id)}>"
         )
 
     @commands.command(aliases=["info"])
@@ -47,13 +48,13 @@ class InfoCog(commands.Cog, name="Info"):
         ramUsage = self.process.memory_full_info().rss / 1024 ** 2
         avgmembers = round(len(self.bot.users) / len(self.bot.guilds))
 
-        embed = discord.Embed(
+        embed = nextcord.Embed(
             # crimson color code
             colour=(0xDC143C)
         )
         embed.set_thumbnail(url=ctx.bot.user.avatar_url)
-        embed.add_field(name=("Uptime"), value=(text), inline=True)
-        embed.add_field(name="Library", value="discord.py", inline=True)
+        embed.add_field(name="Uptime", value=text, inline=True)
+        embed.add_field(name="Library", value="nextcord.py", inline=True)
         embed.add_field(
             name="Servers",
             value=f"{len(ctx.bot.guilds)} ( avg: {avgmembers} users/server )",

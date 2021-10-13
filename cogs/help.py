@@ -1,8 +1,8 @@
-from discord.ext import commands
-import discord
-
 import itertools
 from datetime import datetime as dt
+
+import nextcord
+from nextcord.ext import commands
 
 crimson = 0xDC143C
 
@@ -11,9 +11,9 @@ class Help(commands.HelpCommand):
     def __init__(self, **options):
         super().__init__(verify_checks=True, **options)
 
-    def embedify(self, title: str, description: str) -> discord.Embed:
+    def embedify(self, title: str, description: str) -> nextcord.Embed:
         """Returns the default embed used for our HelpCommand"""
-        embed = discord.Embed(
+        embed = nextcord.Embed(
             title=title, description=description, color=crimson, timestamp=dt.utcnow()
         )
         embed.set_author(
@@ -176,7 +176,7 @@ class Help(commands.HelpCommand):
         return ", ".join(
             [
                 obj.name
-                if isinstance(obj, discord.Role)
+                if isinstance(obj, nextcord.Role)
                 else str(obj).replace("_", " ")
                 for obj in _list
             ]

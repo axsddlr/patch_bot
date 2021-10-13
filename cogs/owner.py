@@ -1,6 +1,5 @@
 # thanks to evieepy on github https://gist.github.com/EvieePy/d78c061a4798ae81be9825468fe146be
-import discord
-from discord.ext import commands
+from nextcord.ext import commands
 
 
 class Owner(commands.Cog):

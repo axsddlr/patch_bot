@@ -1,6 +1,6 @@
 import os
-import discord
-from discord.ext import commands
+import nextcord
+from nextcord.ext import commands
 from dotenv import load_dotenv
 
 
@@ -26,7 +26,6 @@ def get_prefix(bot, message):
 bot = commands.Bot(command_prefix=get_prefix)
 bot.remove_command("help")
 
-
 # This is what we're going to use to load the cogs on startup
 if __name__ == "__main__":
     for filename in os.listdir("cogs"):
@@ -44,7 +43,7 @@ if __name__ == "__main__":
 @bot.event
 async def on_ready():
     #change presence to display custom message
-    await bot.change_presence(activity=discord.Game(name="$help"))
+    await bot.change_presence(activity=nextcord.Game(name="$help"))
     print("Bot connected")
 
 
