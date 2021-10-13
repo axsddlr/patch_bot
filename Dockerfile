@@ -1,4 +1,4 @@
-FROM python:3.7-alpine
+FROM python:3.8-alpine
 LABEL maintainer="Andre Saddler <contact@rehkloos.com>"
 
 LABEL build_date="2021-05-23"
