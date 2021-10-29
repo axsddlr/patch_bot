@@ -1,4 +1,4 @@
-git+https://github.com/nextcord/nextcord.git
+git+https://github.com/nextcord/nextcord.git#master
 python-dotenv==0.18.0
 requests>= 2.18.4
 APScheduler==3.7.0
