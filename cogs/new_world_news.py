@@ -22,7 +22,7 @@ def getNWWUpdatesV1():
 
 
 def getNWWUpdatesV2():
-    URL = "https://api.axsddlr.xyz/newworld/forums/updates"
+    URL = "https://api.axsddlr.xyz/newworld/forums/notice"
     response = requests.get(URL)
     return response.json()
 
@@ -41,6 +41,11 @@ def updater(d, inval, outval):
             if v == "":
                 d[k] = None
     return d
+
+
+def minutes(s):
+    s = s * 60
+    return s
 
 
 class NWW_Patch(commands.Cog, name="New World Patch Notes"):
@@ -112,7 +117,8 @@ class NWW_Patch(commands.Cog, name="New World Patch Notes"):
 
         title = responseJSON["data"][0]["title"]
         # description = responseJSON["data"][0]["description"]
-        thumbnail = "https://images.ctfassets.net/j95d1p8hsuun/12Tl0sQL6vNRfXPkIrfuaz/2374cc44fec67de6b53bcc080a57345d/keyart2.jpg"
+        thumbnail = "https://images.ctfassets.net/j95d1p8hsuun/12Tl0sQL6vNRfXPkIrfuaz" \
+                    "/2374cc44fec67de6b53bcc080a57345d/keyart2.jpg "
         url = responseJSON["data"][0]["url"]
 
         # check if file exists
@@ -139,8 +145,8 @@ class NWW_Patch(commands.Cog, name="New World Patch Notes"):
             hook = Webhook(nww_webhook)
 
             embed = Embed(
-                title="New World",
-                description=f"[{title}]({url})\n\n",
+                title="New World Forums",
+                description=f"[{title}]({url})\n\n\n",
                 # description=f"[{title}]({url})\n\n{description}",
                 color=crimson,
                 timestamp="now",  # sets the timestamp to current time
@@ -163,8 +169,8 @@ class NWW_Patch(commands.Cog, name="New World Patch Notes"):
         scheduler = self.scheduler
 
         # add job for scheduler
-        scheduler.add_job(self.nww_patch_monitor, "interval", seconds=20)
-        # scheduler.add_job(self.nww_patch_monitorv2, "interval", seconds=1805)
+        scheduler.add_job(self.nww_patch_monitor, "interval", seconds=minutes(30))
+        scheduler.add_job(self.nww_patch_monitorv2, "interval", seconds=minutes(31))
 
         # starting the scheduler
         scheduler.start()
