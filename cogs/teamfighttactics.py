@@ -50,6 +50,7 @@ class TFT_Updates(commands.Cog, name="TFT Updates"):
         url = responseJSON["data"]["segments"][0]["url_path"]
         tag = responseJSON["data"]["segments"][0]["tag"]
         full_url = "https://teamfighttactics.leagueoflegends.com/en-us" + url
+        status = responseJSON["data"]["status"]
 
         # check if file exists
         news_exists(saved_json)
@@ -65,28 +66,29 @@ class TFT_Updates(commands.Cog, name="TFT Updates"):
         check_file_json = res["data"]["segments"][0]["title"]
 
         # compare title string from file to title string from api then overwrite file
-        if check_file_json == title:
-            # print("not patch notes")
-            return
-        elif check_file_json != title:
-            # print("False")
-            hook = Webhook(patches_webhook)
+        if data is not None or status == 200:
+            if check_file_json == title:
+                # print("not patch notes")
+                return
+            elif check_file_json != title:
+                # print("False")
+                hook = Webhook(patches_webhook)
 
-            embed = Embed(
-                title="Teamfight Tactics",
-                description=f"[{title}]({full_url})\n\n{description}",
-                color=crimson,
-                timestamp="now",  # sets the timestamp to current time
-            )
-            embed.set_footer(text="Patch bot")
-            embed.set_image(url=banner)
-            file = File("./assets/images/tft_logo.png", name="tft_logo.png")
-            embed.set_thumbnail(url="attachment://tft_logo.png")
+                embed = Embed(
+                    title="Teamfight Tactics",
+                    description=f"[{title}]({full_url})\n\n{description}",
+                    color=crimson,
+                    timestamp="now",  # sets the timestamp to current time
+                )
+                embed.set_footer(text="Patch bot")
+                embed.set_image(url=banner)
+                file = File("./assets/images/tft_logo.png", name="tft_logo.png")
+                embed.set_thumbnail(url="attachment://tft_logo.png")
 
-            hook.send(embed=embed, file=file)
+                hook.send(embed=embed, file=file)
 
-            f = open(saved_json, "w")
-            print(json.dumps(responseJSON), file=f)
+                f = open(saved_json, "w")
+                print(json.dumps(responseJSON), file=f)
 
         f.close()
 
