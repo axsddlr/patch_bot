@@ -17,7 +17,7 @@ crimson = 0xDC143C
 
 
 def getValorantGameUpdates():
-    URL = "https://api.axsddlr.xyz/valorant/news/en-us/game-updates"
+    URL = "https://api.axsddlr.xyz/valorant/en-us/patch-notes"
     response = requests.get(URL)
     return response.json()
 
