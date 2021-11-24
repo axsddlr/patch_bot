@@ -106,13 +106,10 @@ class NWW_Patch(commands.Cog, name="New World Patch Notes"):
         # check if file exists
         nww_exists(saved_json)
 
-        time.sleep(5)
         # open saved_json and check title string
-        f = open(
-            saved_json,
-        )
-        data = json.load(f)
-        res = flatten(data, "", None)
+        with open(saved_json) as f:
+            data = json.load(f)
+            res = flatten(data, '', None)
         check_file_json = res["data"][0]["title"]
 
         # compare title string from file to title string from api then overwrite file
@@ -140,10 +137,10 @@ class NWW_Patch(commands.Cog, name="New World Patch Notes"):
 
             hook.send(embed=embed, file=file)
 
-            f = open(saved_json, "w")
-            print(json.dumps(responseJSON), file=f)
+            with open(saved_json, "w") as updated:
+                json.dump(responseJSON, updated, ensure_ascii=False)
 
-        f.close()
+            updated.close()
 
     @commands.Cog.listener()
     async def on_ready(self):
