@@ -8,7 +8,7 @@ from dhooks import Webhook, Embed, File
 from dotenv import load_dotenv
 from nextcord.ext import commands
 
-from utils.global_utils import news_exists
+from utils.global_utils import news_exists, flatten
 
 load_dotenv()
 patches_webhook = os.getenv("patches_webhook_url")
@@ -19,16 +19,6 @@ def getTFTGameUpdates():
     URL = "https://api.axsddlr.xyz/tft/en-us/patch_notes"
     response = requests.get(URL)
     return response.json()
-
-
-def updater(d, inval, outval):
-    for k, v in d.items():
-        if isinstance(v, dict):
-            updater(d[k], inval, outval)
-        else:
-            if v == "":
-                d[k] = None
-    return d
 
 
 class TFT_Updates(commands.Cog, name="TFT Updates"):
@@ -55,14 +45,10 @@ class TFT_Updates(commands.Cog, name="TFT Updates"):
         # check if file exists
         news_exists(saved_json)
 
-        time.sleep(5)
-
         # open saved_json file
-        f = open(
-            saved_json,
-        )
-        data = json.load(f)
-        res = updater(data, "", None)
+        with open(saved_json) as f:
+            data = json.load(f)
+            res = flatten(data, '', None)
         check_file_json = res["data"]["segments"][0]["title"]
 
         # compare title string from file to title string from api then overwrite file
@@ -87,17 +73,17 @@ class TFT_Updates(commands.Cog, name="TFT Updates"):
 
                 hook.send(embed=embed, file=file)
 
-                f = open(saved_json, "w")
-                print(json.dumps(responseJSON), file=f)
+                with open(saved_json, "w") as updated:
+                    json.dump(responseJSON, updated, ensure_ascii=False)
 
-        f.close()
+                updated.close()
 
     @commands.Cog.listener()
     async def on_ready(self):
         scheduler = self.scheduler
 
         # add job for scheduler
-        scheduler.add_job(self.tftupdates, "interval", seconds=3800)
+        scheduler.add_job(self.tftupdates, "interval", minutes=31)
 
         # starting the scheduler
         scheduler.start()

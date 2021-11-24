@@ -8,7 +8,7 @@ from dhooks import Webhook, Embed, File
 from dotenv import load_dotenv
 from nextcord.ext import commands
 
-from utils.global_utils import news_exists
+from utils.global_utils import news_exists, flatten
 
 load_dotenv()
 patches_webhook = os.getenv("patches_webhook_url")
@@ -32,16 +32,6 @@ def getVALCOMPREDUpdates():
     URL = "https://api.axsddlr.xyz/reddit/ValorantComp"
     response = requests.get(URL)
     return response.json()
-
-
-def updater(d, inval, outval):
-    for k, v in d.items():
-        if isinstance(v, dict):
-            updater(d[k], inval, outval)
-        else:
-            if v == "":
-                d[k] = None
-    return d
 
 
 class Valorant_Updates(commands.Cog, name="Valorant Updates"):
@@ -74,11 +64,9 @@ class Valorant_Updates(commands.Cog, name="Valorant Updates"):
         time.sleep(5)
 
         # open saved_json file
-        f = open(
-            saved_json,
-        )
-        data = json.load(f)
-        res = updater(data, "", None)
+        with open(saved_json) as f:
+            data = json.load(f)
+            res = flatten(data, '', None)
         check_file_json = res["data"]["segments"][0]["title"]
 
         # compare title string from file to title string from api then overwrite file
@@ -105,10 +93,10 @@ class Valorant_Updates(commands.Cog, name="Valorant Updates"):
 
             hook.send(embed=embed, file=file)
 
-            f = open(saved_json, "w")
-            print(json.dumps(responseJSON), file=f)
+            with open(saved_json, "w") as updated:
+                json.dump(responseJSON, updated, ensure_ascii=False)
 
-        f.close()
+            updated.close()
 
     async def valorant_monitor(self):
         await self.bot.wait_until_ready()
@@ -131,13 +119,10 @@ class Valorant_Updates(commands.Cog, name="Valorant Updates"):
         # check if file exists
         news_exists(saved_json)
 
-        time.sleep(5)
         # open saved_json and check title string
-        f = open(
-            saved_json,
-        )
-        data = json.load(f)
-        res = updater(data, "", None)
+        with open(saved_json) as f:
+            data = json.load(f)
+            res = flatten(data, '', None)
         check_file_json = res["data"]["segments"][0]["title"]
 
         if (flair != "Educational") and (check_file_json == title):
@@ -159,10 +144,10 @@ class Valorant_Updates(commands.Cog, name="Valorant Updates"):
             embed.set_thumbnail(url="attachment://val_reddit.png")
 
             hook.send(embed=embed, file=file)
-            f = open(saved_json, "w")
-            print(json.dumps(responseJSON), file=f)
+            with open(saved_json, "w") as updated:
+                json.dump(responseJSON, updated, ensure_ascii=False)
 
-        f.close()
+            updated.close()
 
     async def valorant_comp_monitor(self):
         await self.bot.wait_until_ready()
@@ -185,13 +170,10 @@ class Valorant_Updates(commands.Cog, name="Valorant Updates"):
         # check if file exists
         news_exists(saved_json)
 
-        time.sleep(5)
         # open saved_json and check title string
-        f = open(
-            saved_json,
-        )
-        data = json.load(f)
-        res = updater(data, "", None)
+        with open(saved_json) as f:
+            data = json.load(f)
+            res = flatten(data, '', None)
         check_file_json = res["data"]["segments"][0]["title"]
 
         if (flair != "Highlight | Esports") and (check_file_json == title):
@@ -213,19 +195,19 @@ class Valorant_Updates(commands.Cog, name="Valorant Updates"):
             embed.set_thumbnail(url="attachment://val_reddit.png")
 
             hook.send(embed=embed, file=file)
-            f = open(saved_json, "w")
-            print(json.dumps(responseJSON), file=f)
+            with open(saved_json, "w") as updated:
+                json.dump(responseJSON, updated, ensure_ascii=False)
 
-        f.close()
+            updated.close()
 
     @commands.Cog.listener()
     async def on_ready(self):
         scheduler = self.scheduler
 
         # add job for scheduler
-        scheduler.add_job(self.valupdates, "interval", seconds=3600)
-        scheduler.add_job(self.valorant_monitor, "interval", seconds=1200)
-        scheduler.add_job(self.valorant_comp_monitor, "interval", seconds=1235)
+        scheduler.add_job(self.valupdates, "interval", minutes=60)
+        scheduler.add_job(self.valorant_monitor, "interval", minutes=20)
+        scheduler.add_job(self.valorant_comp_monitor, "interval", minutes=25)
 
         # starting the scheduler
         scheduler.start()

@@ -8,7 +8,7 @@ from dhooks import Webhook, Embed, File
 from dotenv import load_dotenv
 from nextcord.ext import commands
 
-from utils.global_utils import nww_exists
+from utils.global_utils import nww_exists, flatten
 
 load_dotenv()
 nww_webhook = os.getenv("patches_webhook_url")
@@ -33,21 +33,6 @@ def getNWWREDUpdates():
     return response.json()
 
 
-def updater(d, inval, outval):
-    for k, v in d.items():
-        if isinstance(v, dict):
-            updater(d[k], inval, outval)
-        else:
-            if v == "":
-                d[k] = None
-    return d
-
-
-def minutes(s):
-    s = s * 60
-    return s
-
-
 class NWW_Patch(commands.Cog, name="New World Patch Notes"):
     def __init__(self, bot):
         self.bot = bot
@@ -69,13 +54,10 @@ class NWW_Patch(commands.Cog, name="New World Patch Notes"):
         # check if file exists
         nww_exists(saved_json)
 
-        time.sleep(5)
         # open saved_json and check title string
-        f = open(
-            saved_json,
-        )
-        data = json.load(f)
-        res = updater(data, "", None)
+        with open(saved_json) as f:
+            data = json.load(f)
+            res = flatten(data, '', None)
         check_file_json = res["data"][0]["title"]
 
         # compare title string from file to title string from api then overwrite file
@@ -102,10 +84,10 @@ class NWW_Patch(commands.Cog, name="New World Patch Notes"):
 
             hook.send(embed=embed, file=file)
 
-            f = open(saved_json, "w")
-            print(json.dumps(responseJSON), file=f)
+            with open(saved_json, "w") as updated:
+                json.dump(responseJSON, updated, ensure_ascii=False)
 
-        f.close()
+            updated.close()
 
     async def nww_patch_monitorv2(self):
         await self.bot.wait_until_ready()
@@ -130,7 +112,7 @@ class NWW_Patch(commands.Cog, name="New World Patch Notes"):
             saved_json,
         )
         data = json.load(f)
-        res = updater(data, "", None)
+        res = flatten(data, "", None)
         check_file_json = res["data"][0]["title"]
 
         # compare title string from file to title string from api then overwrite file
@@ -169,8 +151,8 @@ class NWW_Patch(commands.Cog, name="New World Patch Notes"):
         scheduler = self.scheduler
 
         # add job for scheduler
-        scheduler.add_job(self.nww_patch_monitor, "interval", seconds=minutes(30))
-        scheduler.add_job(self.nww_patch_monitorv2, "interval", seconds=minutes(31))
+        scheduler.add_job(self.nww_patch_monitor, "interval", minutes=30)
+        scheduler.add_job(self.nww_patch_monitorv2, "interval", minutes=31)
 
         # starting the scheduler
         scheduler.start()

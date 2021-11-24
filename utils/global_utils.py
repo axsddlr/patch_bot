@@ -2,6 +2,16 @@ import pathlib
 import shutil
 
 
+def flatten(d, inval, outval):
+    for k, v in d.items():
+        if isinstance(v, dict):
+            flatten(d[k], inval, outval)
+        else:
+            if v == "":
+                d[k] = None
+    return d
+
+
 def news_exists(s):
     path = pathlib.Path(s)
     if path.exists():
@@ -72,3 +82,8 @@ def nww_exists(s):
         # For other errors
         except:
             print("Error occurred while copying file.")
+
+
+def minutes(s):
+    s = s * 60
+    return s
