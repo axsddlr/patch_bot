@@ -3,16 +3,12 @@ import time
 
 import requests
 import ujson as json
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from dhooks import Webhook, Embed, File
+from dhooks import Embed, File, Webhook
 from dotenv import load_dotenv
-from nextcord.ext import commands
-
-from utils.global_utils import news_exists, flatten
+from utils.global_utils import crimson, flatten, news_exists
 
 load_dotenv()
 patches_webhook = os.getenv("patches_webhook_url")
-crimson = 0xDC143C
 
 
 def getTFTGameUpdates():
@@ -21,13 +17,8 @@ def getTFTGameUpdates():
     return response.json()
 
 
-class TFT_Updates(commands.Cog, name="TFT Updates"):
-    def __init__(self, bot):
-        self.bot = bot
-        self.scheduler = AsyncIOScheduler(job_defaults={"misfire_grace_time": 900})
-
+class TFT_Updates:
     async def tftupdates(self):
-        await self.bot.wait_until_ready()
 
         # patch-notes channel
         saved_json = "tft_patch_old.json"
@@ -48,7 +39,7 @@ class TFT_Updates(commands.Cog, name="TFT Updates"):
         # open saved_json file
         with open(saved_json) as f:
             data = json.load(f)
-            res = flatten(data, '', None)
+            res = flatten(data, "", None)
         check_file_json = res["data"]["segments"][0]["title"]
 
         # compare title string from file to title string from api then overwrite file
@@ -77,17 +68,3 @@ class TFT_Updates(commands.Cog, name="TFT Updates"):
                     json.dump(responseJSON, updated, ensure_ascii=False)
 
                 updated.close()
-
-    @commands.Cog.listener()
-    async def on_ready(self):
-        scheduler = self.scheduler
-
-        # add job for scheduler
-        scheduler.add_job(self.tftupdates, "interval", minutes=31)
-
-        # starting the scheduler
-        scheduler.start()
-
-
-def setup(bot):
-    bot.add_cog(TFT_Updates(bot))

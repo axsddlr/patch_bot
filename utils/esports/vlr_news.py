@@ -2,17 +2,13 @@ import os
 
 import requests
 import ujson as json
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from dhooks import Webhook, Embed
+from dhooks import Embed, Webhook
 from dotenv import load_dotenv
-from nextcord.ext import commands
-
-from utils.global_utils import news_exists, matches_exists, flatten
+from utils.global_utils import crimson, flatten, matches_exists, news_exists
 
 load_dotenv()
 vlr_news_webhook = os.getenv("vlr_news_webhook_url")
 vlr_matches_webhook = os.getenv("vlr_matches_webhook_url")
-crimson = 0xDC143C
 
 
 def getVLRUpdates():
@@ -27,13 +23,8 @@ def getVLRMatches():
     return response.json()
 
 
-class VLR_NEWS(commands.Cog, name="VLR News"):
-    def __init__(self, bot):
-        self.bot = bot
-        self.scheduler = AsyncIOScheduler(job_defaults={"misfire_grace_time": 900})
-
+class VLR_NEWS:
     async def vlr_news_monitor(self):
-        await self.bot.wait_until_ready()
 
         saved_json = "vlr_old.json"
 
@@ -52,7 +43,7 @@ class VLR_NEWS(commands.Cog, name="VLR News"):
         # open saved_json and check title string
         with open(saved_json) as f:
             data = json.load(f)
-            res = flatten(data, '', None)
+            res = flatten(data, "", None)
         check_file_json = res["data"]["segments"][0]["title"]
 
         # compare title string from file to title string from api then overwrite file
@@ -70,7 +61,6 @@ class VLR_NEWS(commands.Cog, name="VLR News"):
             updated.close()
 
     async def vlr_matches_monitor(self):
-        await self.bot.wait_until_ready()
 
         saved_json = "vlr_matches.json"
 
@@ -97,7 +87,7 @@ class VLR_NEWS(commands.Cog, name="VLR News"):
         # open saved_json and check title string
         with open(saved_json) as f:
             data = json.load(f)
-            res = flatten(data, '', None)
+            res = flatten(data, "", None)
         check_file_json = res["data"][0]["team1"]["name"]
 
         # compare title string from file to title string from api then overwrite file
@@ -131,19 +121,3 @@ class VLR_NEWS(commands.Cog, name="VLR News"):
                 json.dump(responseJSON, updated, ensure_ascii=False)
 
             updated.close()
-
-    @commands.Cog.listener()
-    async def on_ready(self):
-
-        scheduler = self.scheduler
-
-        # add job for scheduler
-        scheduler.add_job(self.vlr_matches_monitor, "interval", seconds=45)
-        scheduler.add_job(self.vlr_news_monitor, "interval", minutes=30)
-
-        # starting the scheduler
-        scheduler.start()
-
-
-def setup(bot):
-    bot.add_cog(VLR_NEWS(bot))

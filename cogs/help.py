@@ -3,8 +3,7 @@ from datetime import datetime as dt
 
 import nextcord
 from nextcord.ext import commands
-
-crimson = 0xDC143C
+from utils.global_utils import crimson
 
 
 class Help(commands.HelpCommand):

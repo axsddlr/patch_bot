@@ -1,6 +1,8 @@
 import pathlib
 import shutil
 
+crimson = 0xDC143C
+
 
 def flatten(d, inval, outval):
     for k, v in d.items():
