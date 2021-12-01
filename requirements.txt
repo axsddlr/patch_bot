@@ -1,7 +1,7 @@
-git+https://github.com/nextcord/nextcord.git#master
-python-dotenv==0.18.0
+python-dotenv==0.19.2
 requests>= 2.18.4
-APScheduler==3.7.0
-ujson==4.0.2
+APScheduler==3.8.1
+ujson==4.3.0
 dhooks==1.1.4
 psutil==5.8.0
+git+https://github.com/nextcord/nextcord.git#master
